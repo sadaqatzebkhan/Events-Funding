@@ -15,6 +15,7 @@ export interface IUserDoc extends Document {
   whatsapp: string;
   role: 'admin' | 'member' | 'viewer';
   active: boolean;
+  deleted?: boolean;
   createdAt: string;
   updatedAt: string;
   lastSeenEventAt: string;
@@ -32,6 +33,7 @@ const UserSchema = new Schema<IUserDoc>(
     whatsapp: { type: String, default: '' },
     role: { type: String, enum: ['admin', 'member', 'viewer'], default: 'member' },
     active: { type: Boolean, default: true },
+    deleted: { type: Boolean, default: false },
     createdAt: { type: String, required: true },
     updatedAt: { type: String, required: true },
     // Watermark for the "new event" notification modal — events created after

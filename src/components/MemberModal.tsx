@@ -82,7 +82,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
       };
 
       if (!isEditing) {
-        bodyData.username = username.trim() || phone.replace(/\D/g, '') || `user_${Date.now()}`;
+        bodyData.username = username.trim() || undefined;
         bodyData.password = password.trim() || 'family123';
       }
 

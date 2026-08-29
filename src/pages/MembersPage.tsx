@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { User } from '../types';
 import { formatCurrency } from '../utils/formatters';
 import { useAuth } from '../context/AuthContext';
+import { useData } from '../context/DataContext';
 import {
   Users,
   UserPlus,
@@ -25,9 +26,7 @@ interface MembersPageProps {
 
 export const MembersPage: React.FC<MembersPageProps> = ({ onSelectMember }) => {
   const { user } = useAuth();
-  const [members, setMembers] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { membersList: members, isMembersLoading: isLoading, membersError: error, fetchMembers, invalidateCache } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<'all' | 'contributing' | 'viewer'>('all');
 
@@ -36,32 +35,6 @@ export const MembersPage: React.FC<MembersPageProps> = ({ onSelectMember }) => {
   const [memberToEdit, setMemberToEdit] = useState<User | null>(null);
   const [memberToDelete, setMemberToDelete] = useState<User | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  const fetchMembers = async () => {
-    try {
-      const token = localStorage.getItem('mf_token');
-      const res = await fetch('/api/members', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error('Failed to fetch family members');
-      }
-
-      const data = await res.json();
-      setMembers(data.members || []);
-    } catch (err: any) {
-      setError(err.message || 'Network error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMembers();
-  }, []);
 
   const handleDeleteMember = async () => {
     if (!memberToDelete) return;
@@ -78,13 +51,13 @@ export const MembersPage: React.FC<MembersPageProps> = ({ onSelectMember }) => {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || 'Failed to deactivate member');
+        throw new Error(data.error || 'Failed to delete member');
       }
 
       setMemberToDelete(null);
-      fetchMembers();
+      invalidateCache();
     } catch (err: any) {
-      alert(err.message || 'Error deactivating member');
+      alert(err.message || 'Error deleting member');
     } finally {
       setIsDeleting(false);
     }
@@ -439,18 +412,18 @@ export const MembersPage: React.FC<MembersPageProps> = ({ onSelectMember }) => {
         isOpen={isMemberModalOpen}
         onClose={() => setIsMemberModalOpen(false)}
         memberToEdit={memberToEdit}
-        onSuccess={fetchMembers}
+        onSuccess={invalidateCache}
       />
 
-      {/* Deactivate Confirmation */}
+      {/* Delete Confirmation */}
       <ConfirmDialog
         isOpen={!!memberToDelete}
         onClose={() => setMemberToDelete(null)}
         onConfirm={handleDeleteMember}
         isLoading={isDeleting}
-        title="Deactivate Family Member?"
-        message={`Are you sure you want to deactivate "${memberToDelete?.name}"?\n\nHistorical financial integrity is fully preserved: all past event payments and contribution logs will remain in the records.`}
-        confirmText="Yes, Deactivate Member"
+        title="Delete Family Member?"
+        message={`Are you sure you want to delete "${memberToDelete?.name}" from the members directory?\n\nThe member will be removed from the directory and excluded from future events. All existing historical event records and past payment details are completely preserved with zero data loss.`}
+        confirmText="Yes, Delete Member"
       />
     </div>
   );

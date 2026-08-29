@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { DataProvider, useData } from './context/DataContext';
 import { LoginPage } from './pages/LoginPage';
 import { NavTab } from './components/Sidebar';
 import { BottomNav } from './components/BottomNav';
@@ -13,10 +14,12 @@ import { ProfilePage } from './pages/ProfilePage';
 import { EventModal } from './components/EventModal';
 import { PageLoader } from './components/PageLoader';
 import { NewEventNotificationModal } from './components/NewEventNotificationModal';
+import { ExitConfirmModal } from './components/ExitConfirmModal';
 import { EventItem } from './types';
 
 const MainApp: React.FC = () => {
   const { user, isLoading } = useAuth();
+  const { invalidateCache } = useData();
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
 
   // Sub-detail view state
@@ -26,9 +29,100 @@ const MainApp: React.FC = () => {
   // Global Create Event Modal
   const [isGlobalCreateEventOpen, setIsGlobalCreateEventOpen] = useState(false);
 
-  // New-event notification modal (members/viewers only — admins create events, not receive these)
+  // Exit Confirmation Modal
+  const [isExitConfirmOpen, setIsExitConfirmOpen] = useState(false);
+
+  // New-event notification modal (members/viewers only)
   const [unseenEvents, setUnseenEvents] = useState<EventItem[]>([]);
   const [isDismissingNotification, setIsDismissingNotification] = useState(false);
+
+  // Ref to track latest state inside popstate listener
+  const stateRef = useRef({
+    activeTab,
+    selectedEventId,
+    selectedMemberId,
+    isGlobalCreateEventOpen,
+    isExitConfirmOpen,
+  });
+
+  useEffect(() => {
+    stateRef.current = {
+      activeTab,
+      selectedEventId,
+      selectedMemberId,
+      isGlobalCreateEventOpen,
+      isExitConfirmOpen,
+    };
+  }, [activeTab, selectedEventId, selectedMemberId, isGlobalCreateEventOpen, isExitConfirmOpen]);
+
+  // Push history state to capture back button
+  useEffect(() => {
+    if (!user) return;
+    window.history.pushState({ app: 'mutual_fund', time: Date.now() }, '');
+  }, [user, activeTab, selectedEventId, selectedMemberId]);
+
+  // Back button interception
+  useEffect(() => {
+    if (!user) return;
+
+    const handlePopState = (e: PopStateEvent) => {
+      const current = stateRef.current;
+
+      // 1. If Exit Modal is open, close it
+      if (current.isExitConfirmOpen) {
+        setIsExitConfirmOpen(false);
+        window.history.pushState({ app: 'mutual_fund' }, '');
+        return;
+      }
+
+      // 2. If Create Event modal is open, close it
+      if (current.isGlobalCreateEventOpen) {
+        setIsGlobalCreateEventOpen(false);
+        window.history.pushState({ app: 'mutual_fund' }, '');
+        return;
+      }
+
+      // 3. If viewing event details, go back to events list
+      if (current.selectedEventId) {
+        setSelectedEventId(null);
+        window.history.pushState({ app: 'mutual_fund' }, '');
+        return;
+      }
+
+      // 4. If viewing member details, go back to members list
+      if (current.selectedMemberId) {
+        setSelectedMemberId(null);
+        window.history.pushState({ app: 'mutual_fund' }, '');
+        return;
+      }
+
+      // 5. If on secondary tab (events, members, profile), go to dashboard
+      if (current.activeTab !== 'dashboard') {
+        setActiveTab('dashboard');
+        window.history.pushState({ app: 'mutual_fund' }, '');
+        return;
+      }
+
+      // 6. If already on Dashboard, show Exit Confirmation Dialog
+      setIsExitConfirmOpen(true);
+      window.history.pushState({ app: 'mutual_fund' }, '');
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [user]);
+
+  const handleConfirmQuit = () => {
+    setIsExitConfirmOpen(false);
+    // If running in browser or standalone PWA, navigate back or blur
+    if (window.history.length > 1) {
+      window.history.go(-2);
+    } else {
+      window.close();
+    }
+  };
 
   useEffect(() => {
     if (!user || user.role === 'admin') return;
@@ -46,7 +140,7 @@ const MainApp: React.FC = () => {
           setUnseenEvents(data.events);
         }
       } catch {
-        // Silently ignore — a missed notification is not worth disrupting the app for.
+        // Silently ignore
       }
     })();
 
@@ -64,7 +158,7 @@ const MainApp: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
     } catch {
-      // Even if this fails, close the modal locally — it'll just be offered again next visit.
+      // ignore
     } finally {
       setUnseenEvents([]);
       setIsDismissingNotification(false);
@@ -112,9 +206,7 @@ const MainApp: React.FC = () => {
       {/* Top Header */}
       <Header title={getPageTitle()} />
 
-      {/* Main Content Viewport — bottom padding clears the fixed BottomNav, which
-          itself grows taller on devices with a gesture/button navigation bar
-          (see BottomNav.tsx's safe-area-inset-bottom padding). */}
+      {/* Main Content Viewport */}
       <main
         className="flex-1 w-full max-w-lg mx-auto min-w-0"
         style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
@@ -174,6 +266,7 @@ const MainApp: React.FC = () => {
         onSuccess={() => {
           setSelectedEventId(null);
           setActiveTab('events');
+          invalidateCache();
         }}
       />
 
@@ -183,6 +276,13 @@ const MainApp: React.FC = () => {
         onDismiss={handleDismissNotification}
         isDismissing={isDismissingNotification}
       />
+
+      {/* Accidental Quit / Back Button Confirmation Dialog */}
+      <ExitConfirmModal
+        isOpen={isExitConfirmOpen}
+        onClose={() => setIsExitConfirmOpen(false)}
+        onConfirmQuit={handleConfirmQuit}
+      />
     </div>
   );
 };
@@ -190,7 +290,9 @@ const MainApp: React.FC = () => {
 export function App() {
   return (
     <AuthProvider>
-      <MainApp />
+      <DataProvider>
+        <MainApp />
+      </DataProvider>
     </AuthProvider>
   );
 }

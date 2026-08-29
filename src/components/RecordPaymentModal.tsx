@@ -182,7 +182,7 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
                 <input
                   type="number"
                   min="1"
-                  step="100"
+                  step="any"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="e.g. 2000"

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { EventItem } from '../types';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { useAuth } from '../context/AuthContext';
+import { useData } from '../context/DataContext';
 import {
   CalendarDays,
   PlusCircle,
@@ -20,9 +21,7 @@ interface EventsPageProps {
 
 export const EventsPage: React.FC<EventsPageProps> = ({ onSelectEvent }) => {
   const { user } = useAuth();
-  const [events, setEvents] = useState<EventItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { eventsList: events, isEventsLoading: isLoading, eventsError: error, fetchEvents, invalidateCache } = useData();
   const [searchTerm, setSearchTerm] = useState('');
 
   // Modals state
@@ -30,32 +29,6 @@ export const EventsPage: React.FC<EventsPageProps> = ({ onSelectEvent }) => {
   const [eventToEdit, setEventToEdit] = useState<EventItem | null>(null);
   const [eventToDelete, setEventToDelete] = useState<EventItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  const fetchEvents = async () => {
-    try {
-      const token = localStorage.getItem('mf_token');
-      const res = await fetch('/api/events', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error('Failed to load events');
-      }
-
-      const data = await res.json();
-      setEvents(data.events || []);
-    } catch (err: any) {
-      setError(err.message || 'Network error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
 
   const handleDeleteEvent = async () => {
     if (!eventToDelete) return;
@@ -76,7 +49,7 @@ export const EventsPage: React.FC<EventsPageProps> = ({ onSelectEvent }) => {
       }
 
       setEventToDelete(null);
-      fetchEvents();
+      invalidateCache();
     } catch (err: any) {
       alert(err.message || 'Error deleting event');
     } finally {
@@ -231,7 +204,7 @@ export const EventsPage: React.FC<EventsPageProps> = ({ onSelectEvent }) => {
         isOpen={isEventModalOpen}
         onClose={() => setIsEventModalOpen(false)}
         eventToEdit={eventToEdit}
-        onSuccess={fetchEvents}
+        onSuccess={invalidateCache}
       />
 
       {/* Delete Confirmation Dialog */}

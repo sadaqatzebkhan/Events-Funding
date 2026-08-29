@@ -20,13 +20,8 @@ const app = express();
 app.disable('x-powered-by');
 app.use((_req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-  // Explicitly allow camera/microphone for this origin — needed for an
-  // upcoming payment-proof photo upload feature. No CSP is set elsewhere
-  // that would additionally restrict this; declaring it here just removes
-  // any ambiguity from a host's own default policy.
+  // Allow camera/microphone for payment-proof photo upload feature if needed
   res.setHeader('Permissions-Policy', 'camera=(self), microphone=(self), geolocation=()');
   if (process.env.NODE_ENV === 'production') {
     res.setHeader('Strict-Transport-Security', 'max-age=15552000; includeSubDomains');

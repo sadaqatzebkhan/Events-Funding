@@ -110,6 +110,39 @@ export const LoginPage: React.FC = () => {
               )}
             </button>
           </form>
+
+          {/* Quick Demo Access */}
+          <div className="pt-3 border-t border-slate-100">
+            <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2 text-center">
+              Quick Test Accounts
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                id="demo-login-admin"
+                onClick={() => {
+                  setUsername('admin');
+                  setPassword('admin123');
+                }}
+                className="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-left text-xs transition-colors cursor-pointer"
+              >
+                <div className="font-semibold text-emerald-700">Admin</div>
+                <div className="text-[10px] text-slate-500 font-mono">admin / admin123</div>
+              </button>
+              <button
+                type="button"
+                id="demo-login-member"
+                onClick={() => {
+                  setUsername('03001112233');
+                  setPassword('family123');
+                }}
+                className="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-left text-xs transition-colors cursor-pointer"
+              >
+                <div className="font-semibold text-slate-800">Member</div>
+                <div className="text-[10px] text-slate-500 font-mono">03001112233 / family123</div>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

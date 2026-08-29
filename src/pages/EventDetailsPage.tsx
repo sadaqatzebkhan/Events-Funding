@@ -16,6 +16,7 @@ import { RecordPaymentModal } from '../components/RecordPaymentModal';
 import { EventModal } from '../components/EventModal';
 import { WhatsAppReminderModal } from '../components/WhatsAppReminderModal';
 import { EventDetailsSkeleton } from '../components/Skeleton';
+import { useData } from '../context/DataContext';
 
 interface EventDetailsPageProps {
   eventId: string;
@@ -29,6 +30,7 @@ export const EventDetailsPage: React.FC<EventDetailsPageProps> = ({
   onSelectMember,
 }) => {
   const { user } = useAuth();
+  const { invalidateCache } = useData();
   const [data, setData] = useState<EventDetailsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -354,15 +356,21 @@ export const EventDetailsPage: React.FC<EventDetailsPageProps> = ({
         onClose={() => setIsPaymentModalOpen(false)}
         eventName={event.name}
         paymentRecord={selectedPaymentRecord}
-        onPaymentSuccess={fetchEventDetails}
+        onPaymentSuccess={() => {
+          fetchEventDetails();
+          invalidateCache();
+        }}
       />
 
-      {/* Edit Event Modal (Simple direct update of event details and total expense) */}
+      {/* Edit Event Modal */}
       <EventModal
         isOpen={isEditEventModalOpen}
         onClose={() => setIsEditEventModalOpen(false)}
         eventToEdit={event}
-        onSuccess={fetchEventDetails}
+        onSuccess={() => {
+          fetchEventDetails();
+          invalidateCache();
+        }}
       />
     </div>
   );

@@ -179,7 +179,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                 <input
                   type="number"
                   min="0"
-                  step="500"
+                  step="any"
                   value={totalExpense}
                   onChange={(e) => setTotalExpense(e.target.value)}
                   placeholder="e.g. 15000"
@@ -201,7 +201,7 @@ export const EventModal: React.FC<EventModalProps> = ({
               <input
                 type="number"
                 min="0"
-                step="100"
+                step="any"
                 value={requiredAmount}
                 onChange={(e) => setRequiredAmount(e.target.value)}
                 placeholder="e.g. 2000"

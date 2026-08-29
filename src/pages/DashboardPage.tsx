@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { DashboardData } from '../types';
+import React from 'react';
 import { formatCurrency } from '../utils/formatters';
 import { useAuth } from '../context/AuthContext';
+import { useData } from '../context/DataContext';
 import {
   Wallet,
   CalendarDays,
@@ -10,6 +10,7 @@ import {
   Clock,
   ChevronRight,
   PlusCircle,
+  RefreshCw,
 } from 'lucide-react';
 import { DashboardSkeleton } from '../components/Skeleton';
 
@@ -23,58 +24,33 @@ interface DashboardPageProps {
 export const DashboardPage: React.FC<DashboardPageProps> = ({
   onNavigateToEvents,
   onNavigateToMembers,
+  onSelectEvent,
   onOpenCreateEvent,
 }) => {
   const { user } = useAuth();
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { dashboardData: data, isDashboardLoading: isLoading, dashboardError: error, fetchDashboard, isRefreshing } = useData();
 
-  const fetchDashboard = async () => {
-    try {
-      const token = localStorage.getItem('mf_token');
-      const res = await fetch('/api/dashboard', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error('Failed to load dashboard data');
-      }
-
-      const json = await res.json();
-      setData(json);
-    } catch (err: any) {
-      setError(err.message || 'Network error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
-
-  if (isLoading) {
+  if (isLoading && !data) {
     return <DashboardSkeleton />;
   }
 
-  if (error || !data) {
+  if (error && !data) {
     return (
       <div className="p-6 text-center max-w-md mx-auto">
         <div className="p-4 bg-slate-100 border border-slate-200 text-slate-800 rounded-xl text-sm mb-3">
           {error || 'Unable to load dashboard data.'}
         </div>
         <button
-          onClick={fetchDashboard}
-          className="px-4 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-semibold"
+          onClick={() => fetchDashboard(true)}
+          className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-semibold cursor-pointer"
         >
           Try Again
         </button>
       </div>
     );
   }
+
+  if (!data) return null;
 
   const { stats } = data;
 

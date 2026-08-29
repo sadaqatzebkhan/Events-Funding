@@ -67,12 +67,22 @@ router.post('/', authenticate, requireAdmin, async (req: AuthRequest, res: Respo
       return;
     }
 
-    // Generate username or use provided
-    const userHandle = username?.trim() || phone.replace(/\D/g, '') || `member_${Date.now()}`;
-    const existing = await db.findUserByUsername(userHandle);
-    if (existing) {
-      res.status(400).json({ error: 'A member with this username or phone number already exists.' });
-      return;
+    // Allow duplicate names, father names, and shared contact numbers (e.g. family brothers)
+    let userHandle = (username?.trim() || '').toLowerCase();
+    if (!userHandle) {
+      const baseSlug = name.trim().toLowerCase().replace(/[^a-z0-9]/g, '_').slice(0, 15) || 'member';
+      let candidate = baseSlug;
+      let counter = 1;
+      while (await db.findUserByUsername(candidate)) {
+        candidate = `${baseSlug}_${counter++}`;
+      }
+      userHandle = candidate;
+    } else {
+      const existing = await db.findUserByUsername(userHandle);
+      if (existing) {
+        res.status(400).json({ error: 'This login username is already taken. Please choose a different username.' });
+        return;
+      }
     }
 
     const plainPassword = password?.trim() || 'family123';
@@ -97,7 +107,7 @@ router.post('/', authenticate, requireAdmin, async (req: AuthRequest, res: Respo
     const { passwordHash: _, ...safeUser } = newUser;
     res.status(201).json({
       member: safeUser,
-      message: `Family member ${newUser.name} added successfully! (Default Password: ${plainPassword})`,
+      message: `Family member ${newUser.name} added successfully! (Username: ${userHandle}, Default Password: ${plainPassword})`,
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message || 'Failed to add member' });
@@ -209,13 +219,13 @@ router.put('/:id', authenticate, async (req: AuthRequest, res: Response): Promis
   }
 });
 
-// DELETE /api/members/:id - Deactivate member safely preserving records (Admin only)
+// DELETE /api/members/:id - Delete member safely preserving records (Admin only)
 router.delete('/:id', authenticate, requireAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const memberId = req.params.id;
 
     if (req.user!.id === memberId) {
-      res.status(400).json({ error: 'You cannot deactivate your own admin account.' });
+      res.status(400).json({ error: 'You cannot delete your own admin account.' });
       return;
     }
 
@@ -226,10 +236,10 @@ router.delete('/:id', authenticate, requireAdmin, async (req: AuthRequest, res: 
     }
 
     res.json({
-      message: 'Member has been safely deactivated. All past financial records and payment histories are preserved.',
+      message: 'Member deleted from directory. All past financial records and payment histories are safely preserved.',
     });
   } catch (err: any) {
-    res.status(500).json({ error: err.message || 'Failed to deactivate member' });
+    res.status(500).json({ error: err.message || 'Failed to delete member' });
   }
 });
 

@@ -16,30 +16,33 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const user = await db.findUserByUsername(username);
-    if (!user) {
+    const matchingUsers = await db.findUsersByIdentifier(username);
+    if (!matchingUsers || matchingUsers.length === 0) {
       res.status(401).json({ error: 'Invalid login credentials. User not found.' });
       return;
     }
 
-    if (!user.active) {
-      res.status(403).json({ error: 'This account has been deactivated. Please contact the family Admin.' });
-      return;
-    }
+    // Find the user whose password matches among the candidates
+    let authenticatedUser = matchingUsers.find((u) => u.active && bcrypt.compareSync(password, u.passwordHash));
 
-    const isMatch = bcrypt.compareSync(password, user.passwordHash);
-    if (!isMatch) {
+    if (!authenticatedUser) {
+      // Check if any matching account was deactivated
+      const inactive = matchingUsers.find((u) => !u.active && bcrypt.compareSync(password, u.passwordHash));
+      if (inactive) {
+        res.status(403).json({ error: 'This account has been deactivated. Please contact the family Admin.' });
+        return;
+      }
       res.status(401).json({ error: 'Incorrect password. Please try again.' });
       return;
     }
 
-    const token = generateToken(user);
-    const { passwordHash: _, ...safeUser } = user;
+    const token = generateToken(authenticatedUser);
+    const { passwordHash: _, ...safeUser } = authenticatedUser;
 
     res.json({
       token,
       user: safeUser,
-      message: `Welcome back, ${user.name}!`,
+      message: `Welcome back, ${authenticatedUser.name}!`,
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message || 'Login failed' });
