@@ -65,7 +65,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             </div>
             <div>
               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                Mutual Fund
+                Mazeed Abad Fund
               </span>
             </div>
           </div>

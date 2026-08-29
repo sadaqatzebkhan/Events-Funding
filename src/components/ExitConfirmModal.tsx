@@ -26,7 +26,7 @@ export const ExitConfirmModal: React.FC<ExitConfirmModalProps> = ({
             Close Application?
           </h3>
           <p className="text-xs text-slate-600 leading-relaxed max-w-xs mx-auto">
-            Are you sure you want to close and exit the Mutual Fund app?
+            Are you sure you want to close and exit the Mazeed Abad Fund app?
           </p>
         </div>
 

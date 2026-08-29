@@ -13,12 +13,12 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
     <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 shadow-2xs">
       <div className="max-w-lg mx-auto flex items-center justify-between gap-3">
         {/* Logo, Title & User Meta */}
-        <div className="min-w-0 flex-1 flex items-center gap-2.5">
+        <div className="min-w-0 flex-1 flex items-center gap-3">
           <img
             src="/logo.jpeg"
             alt="Mazeed Abad Fund logo"
             referrerPolicy="no-referrer"
-            className="w-9 h-9 rounded-xl object-contain bg-white p-0.5 shadow-2xs border border-slate-200 shrink-0"
+            className="w-11 h-11 rounded-xl object-contain bg-white p-1 shadow-xs border border-slate-200 shrink-0"
           />
           <div className="min-w-0">
             <h1 className="text-lg font-bold text-slate-900 truncate tracking-tight">

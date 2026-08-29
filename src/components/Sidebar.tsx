@@ -55,13 +55,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 src="/logo.jpeg"
                 alt="Mazeed Abad Fund logo"
                 referrerPolicy="no-referrer"
-                className="w-10 h-10 rounded-xl object-contain bg-white p-0.5 shadow-xs border border-emerald-100"
+                className="w-12 h-12 rounded-2xl object-contain bg-white p-1 shadow-xs border border-emerald-100"
               />
               <div>
-                <h1 className="font-bold text-lg text-slate-900 leading-tight tracking-tight">
-                  Mutual Fund
+                <h1 className="font-bold text-base text-slate-900 leading-tight tracking-tight">
+                  Mazeed Abad Fund
                 </h1>
-                <p className="text-xs text-emerald-700 font-semibold tracking-wide">
+                <p className="text-[11px] text-emerald-700 font-semibold tracking-wide">
                   Transparent Fund System
                 </p>
               </div>

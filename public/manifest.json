@@ -1,7 +1,7 @@
 {
-  "name": "Mutual Fund",
-  "short_name": "Mutual Fund",
-  "description": "Transparent mutual fund system for tracking events, expenses, and member contributions.",
+  "name": "Mazeed Abad Fund",
+  "short_name": "Mazeed Abad",
+  "description": "Transparent fund system for tracking events, expenses, and member contributions.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

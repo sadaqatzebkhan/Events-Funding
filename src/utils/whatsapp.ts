@@ -44,7 +44,7 @@ export function generateReminderMessage(
 
 Umeed hai aap khariyat se honge.
 
-Yeh message *Mutual Fund* ki janib se ek mo'addab aur zaroori payment reminder hai:
+Yeh message *Mazeed Abad Fund* ki janib se ek mo'addab aur zaroori payment reminder hai:
 
 📌 *Event:* ${eventName}
 📅 *Date:* ${formattedDate}
@@ -54,10 +54,10 @@ Yeh message *Mutual Fund* ki janib se ek mo'addab aur zaroori payment reminder h
 
 Aap se dili guzarish hai ke event ke intizamat aur akhrajat ko barwaqt aur behtar tareeqe se paya-e-takmeel tak pohanchane ke liye apni pending raqam (*${formattedPending}*) baraye meherbani jald az jald jamah karwa dein.
 
-Mutual Fund me aap ke qeemti taawun aur sath ka bohat shukriya!
+Mazeed Abad Fund me aap ke qeemti taawun aur sath ka bohat shukriya!
 JazakAllah Khair!
 
-— *Mutual Fund Administration*`
+— *Mazeed Abad Fund Administration*`
     );
   }
 
@@ -67,7 +67,7 @@ JazakAllah Khair!
 
 امید ہے آپ بخیر و عافیت ہوں گے۔
 
-یہ پیغام *میوچل فنڈ (Mutual Fund)* کی طرف سے ایک شائستہ اور ضروری یاد دہانی (Reminder) ہے۔
+یہ پیغام *مزید اباد فنڈ (Mazeed Abad Fund)* کی طرف سے ایک شائستہ اور ضروری یاد دہانی (Reminder) ہے۔
 
 📌 *ایونٹ کا نام:* ${eventName}
 📅 *تاریخ:* ${formattedDate}
@@ -75,12 +75,12 @@ JazakAllah Khair!
 ✅ *ادا شدہ رقم (Paid):* ${formattedPaid}
 ⏳ *بقیہ واجب الادا رقم (Pending):* *${formattedPending}*
 
-محترم فیملی ممبر، آپ سے مودبانہ گزارش ہے کہ فیملی ایونٹ کے جملہ اخراجات اور بروقت انتظامات کے لیے اپنی بقیہ واجب الادا رقم (*${formattedPending}*) جلد از جلد جمع کروا دیں۔
+محترم ممبر، آپ سے مودبانہ گزارش ہے کہ ایونٹ کے جملہ اخراجات اور بروقت انتظامات کے لیے اپنی بقیہ واجب الادا رقم (*${formattedPending}*) جلد از جلد جمع کروا دیں۔
 
-آپ کے فیملی تعاون اور بروقت شمولیت کا تہہ دل سے شکریہ!
+آپ کے تعاون اور بروقت شمولیت کا تہہ دل سے شکریہ!
 جزاک اللہ خیراً کثیرا۔
 
-— *انتظامیہ: میوچل فنڈ*`
+— *انتظامیہ: مزید اباد فنڈ*`
     );
   }
 
@@ -90,7 +90,7 @@ JazakAllah Khair!
 
 Greetings of peace and good health.
 
-This is a formal payment reminder from *Mutual Fund* regarding our family event contribution:
+This is a formal payment reminder from *Mazeed Abad Fund* regarding our event contribution:
 
 📌 *Event:* ${eventName}
 📅 *Date:* ${formattedDate}
@@ -102,7 +102,7 @@ Kindly arrange to clear your pending balance of *${formattedPending}* at your ea
 
 Thank you for your valued support and cooperation.
 
-— *Mutual Fund Administration*`
+— *Mazeed Abad Fund Administration*`
   );
 }
 

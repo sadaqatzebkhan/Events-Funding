@@ -178,7 +178,7 @@ const MainApp: React.FC = () => {
   };
 
   const getPageTitle = () => {
-    if (activeTab === 'dashboard') return 'Mutual Fund';
+    if (activeTab === 'dashboard') return 'Mazeed Abad Fund';
     if (activeTab === 'events') {
       return selectedEventId ? 'Event Details' : 'Events';
     }
@@ -186,7 +186,7 @@ const MainApp: React.FC = () => {
       return selectedMemberId ? 'Member Profile' : 'Members';
     }
     if (activeTab === 'profile') return 'My Profile';
-    return 'Mutual Fund';
+    return 'Mazeed Abad Fund';
   };
 
   const handleTabChange = (tab: NavTab) => {

@@ -1,6 +1,6 @@
 {
-  "name": "Mutual Fund",
-  "description": "A Transparent Mutual Fund System for tracking collective family events, expenses, member contributions, and transparent financial records.",
+  "name": "Mazeed Abad Fund",
+  "description": "A Transparent Fund System for tracking collective family events, expenses, member contributions, and transparent financial records.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

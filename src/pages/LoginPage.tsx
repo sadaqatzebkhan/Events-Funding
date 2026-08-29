@@ -30,17 +30,17 @@ export const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-center px-4 py-8">
       <div className="w-full max-w-sm mx-auto space-y-6">
         {/* Branding */}
-        <div className="text-center space-y-1">
+        <div className="text-center space-y-2">
           <img
             src="/logo.jpeg"
             alt="Mazeed Abad Fund logo"
             referrerPolicy="no-referrer"
-            className="inline-block w-20 h-20 rounded-2xl object-contain bg-white p-1 mb-2 shadow-xs border border-slate-200"
+            className="inline-block w-28 h-28 rounded-3xl object-contain bg-white p-2 mb-1 shadow-md border border-slate-200"
           />
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Mutual Fund
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
+            Mazeed Abad Fund
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 font-medium">
             Sign in to access your fund account
           </p>
         </div>
