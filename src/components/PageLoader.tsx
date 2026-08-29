@@ -16,8 +16,9 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ label = 'Loading Mutual 
       <span className="loader-ring loader-ring-delay absolute inset-0 rounded-2xl bg-emerald-500/40" />
       <img
         src="/logo.jpeg"
-        alt="Mutual Fund logo"
-        className="loader-logo relative w-14 h-14 rounded-2xl object-cover shadow-md border border-white"
+        alt="Mazeed Abad Fund logo"
+        referrerPolicy="no-referrer"
+        className="loader-logo relative w-14 h-14 rounded-2xl object-contain bg-white p-1 shadow-md border border-white"
       />
     </div>
     <p className="text-xs font-semibold text-slate-500 tracking-wide">{label}</p>

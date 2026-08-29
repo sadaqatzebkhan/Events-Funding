@@ -33,8 +33,9 @@ export const LoginPage: React.FC = () => {
         <div className="text-center space-y-1">
           <img
             src="/logo.jpeg"
-            alt="Mutual Fund logo"
-            className="inline-block w-16 h-16 rounded-2xl object-cover mb-2 shadow-xs border border-slate-200"
+            alt="Mazeed Abad Fund logo"
+            referrerPolicy="no-referrer"
+            className="inline-block w-20 h-20 rounded-2xl object-contain bg-white p-1 mb-2 shadow-xs border border-slate-200"
           />
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Mutual Fund

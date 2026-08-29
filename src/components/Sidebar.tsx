@@ -53,8 +53,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="flex items-center gap-3">
               <img
                 src="/logo.jpeg"
-                alt="Mutual Fund logo"
-                className="w-10 h-10 rounded-2xl object-cover shadow-xs border border-emerald-100"
+                alt="Mazeed Abad Fund logo"
+                referrerPolicy="no-referrer"
+                className="w-10 h-10 rounded-xl object-contain bg-white p-0.5 shadow-xs border border-emerald-100"
               />
               <div>
                 <h1 className="font-bold text-lg text-slate-900 leading-tight tracking-tight">

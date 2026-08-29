@@ -16,8 +16,9 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
         <div className="min-w-0 flex-1 flex items-center gap-2.5">
           <img
             src="/logo.jpeg"
-            alt="Mutual Fund logo"
-            className="w-9 h-9 rounded-xl object-cover shadow-2xs border border-slate-200 shrink-0"
+            alt="Mazeed Abad Fund logo"
+            referrerPolicy="no-referrer"
+            className="w-9 h-9 rounded-xl object-contain bg-white p-0.5 shadow-2xs border border-slate-200 shrink-0"
           />
           <div className="min-w-0">
             <h1 className="text-lg font-bold text-slate-900 truncate tracking-tight">

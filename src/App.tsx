@@ -31,6 +31,7 @@ const MainApp: React.FC = () => {
 
   // Exit Confirmation Modal
   const [isExitConfirmOpen, setIsExitConfirmOpen] = useState(false);
+  const isQuittingRef = useRef(false);
 
   // New-event notification modal (members/viewers only)
   const [unseenEvents, setUnseenEvents] = useState<EventItem[]>([]);
@@ -55,57 +56,49 @@ const MainApp: React.FC = () => {
     };
   }, [activeTab, selectedEventId, selectedMemberId, isGlobalCreateEventOpen, isExitConfirmOpen]);
 
-  // Push history state to capture back button
-  useEffect(() => {
-    if (!user) return;
-    window.history.pushState({ app: 'mutual_fund', time: Date.now() }, '');
-  }, [user, activeTab, selectedEventId, selectedMemberId]);
-
-  // Back button interception
+  // Back button interception & history trap
   useEffect(() => {
     if (!user) return;
 
-    const handlePopState = (e: PopStateEvent) => {
+    // Push initial guard barrier so browser back button is intercepted
+    window.history.pushState({ guard: 'mf_app' }, '');
+
+    const handlePopState = () => {
+      if (isQuittingRef.current) return;
+
       const current = stateRef.current;
 
-      // 1. If Exit Modal is open, close it
+      // 1. If Exit Modal is already open, close it
       if (current.isExitConfirmOpen) {
         setIsExitConfirmOpen(false);
-        window.history.pushState({ app: 'mutual_fund' }, '');
+        window.history.pushState({ guard: 'mf_app' }, '');
         return;
       }
 
       // 2. If Create Event modal is open, close it
       if (current.isGlobalCreateEventOpen) {
         setIsGlobalCreateEventOpen(false);
-        window.history.pushState({ app: 'mutual_fund' }, '');
+        window.history.pushState({ guard: 'mf_app' }, '');
         return;
       }
 
       // 3. If viewing event details, go back to events list
       if (current.selectedEventId) {
         setSelectedEventId(null);
-        window.history.pushState({ app: 'mutual_fund' }, '');
+        window.history.pushState({ guard: 'mf_app' }, '');
         return;
       }
 
       // 4. If viewing member details, go back to members list
       if (current.selectedMemberId) {
         setSelectedMemberId(null);
-        window.history.pushState({ app: 'mutual_fund' }, '');
+        window.history.pushState({ guard: 'mf_app' }, '');
         return;
       }
 
-      // 5. If on secondary tab (events, members, profile), go to dashboard
-      if (current.activeTab !== 'dashboard') {
-        setActiveTab('dashboard');
-        window.history.pushState({ app: 'mutual_fund' }, '');
-        return;
-      }
-
-      // 6. If already on Dashboard, show Exit Confirmation Dialog
+      // 5. If on any main tab (Dashboard, Events, Members, Profile): Always show Exit Confirmation
       setIsExitConfirmOpen(true);
-      window.history.pushState({ app: 'mutual_fund' }, '');
+      window.history.pushState({ guard: 'mf_app' }, '');
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -115,8 +108,9 @@ const MainApp: React.FC = () => {
   }, [user]);
 
   const handleConfirmQuit = () => {
+    isQuittingRef.current = true;
     setIsExitConfirmOpen(false);
-    // If running in browser or standalone PWA, navigate back or blur
+    // Unwind history or close tab/window
     if (window.history.length > 1) {
       window.history.go(-2);
     } else {
