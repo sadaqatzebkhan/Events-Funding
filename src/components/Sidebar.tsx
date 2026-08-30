@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LayoutDashboard, CalendarDays, Users, UserCircle, LogOut, ShieldCheck, User as UserIcon, Eye } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { DeveloperProfileModal } from './DeveloperProfileModal';
 
 export type NavTab = 'dashboard' | 'events' | 'members' | 'profile';
 
@@ -18,6 +19,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onClose,
 }) => {
   const { user, logout } = useAuth();
+  const [isDevProfileOpen, setIsDevProfileOpen] = useState(false);
 
   const navItems = [
     { id: 'dashboard' as NavTab, label: 'Dashboard', icon: LayoutDashboard },
@@ -149,8 +151,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <LogOut size={18} />
             <span>Logout</span>
           </button>
+
+          {/* Developer Credit in Sidebar */}
+          <div className="pt-2 text-center border-t border-slate-100 mt-2 text-[11px] text-slate-400 font-medium select-none">
+            <span>App by </span>
+            <button
+              type="button"
+              onClick={() => setIsDevProfileOpen(true)}
+              className="text-emerald-700 font-bold hover:text-emerald-800 hover:underline cursor-pointer focus:outline-none"
+            >
+              Sadaqat Zeb Khan
+            </button>
+          </div>
         </div>
       </aside>
+
+      {/* Developer Profile Modal */}
+      <DeveloperProfileModal
+        isOpen={isDevProfileOpen}
+        onClose={() => setIsDevProfileOpen(false)}
+      />
     </>
   );
 };

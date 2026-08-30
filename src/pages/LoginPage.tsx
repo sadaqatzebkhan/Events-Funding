@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Lock, User, AlertCircle, ArrowRight } from 'lucide-react';
+import { DeveloperProfileModal } from '../components/DeveloperProfileModal';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
@@ -8,6 +9,7 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDevProfileOpen, setIsDevProfileOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,7 +114,29 @@ export const LoginPage: React.FC = () => {
             </button>
           </form>
         </div>
+
+        {/* Author Credit */}
+        <p
+          id="author-credit"
+          className="text-center text-xs text-slate-500 font-medium tracking-wide flex items-center justify-center gap-1.5 pt-1 select-none"
+        >
+          <span>Made with</span>
+          <span className="text-rose-500 inline-block">❤️</span>
+          <button
+            type="button"
+            onClick={() => setIsDevProfileOpen(true)}
+            className="text-emerald-700 font-bold hover:text-emerald-800 hover:underline underline-offset-2 transition-colors cursor-pointer focus:outline-none"
+          >
+            Sadaqat Zeb Khan
+          </button>
+        </p>
       </div>
+
+      {/* Developer Profile Modal */}
+      <DeveloperProfileModal
+        isOpen={isDevProfileOpen}
+        onClose={() => setIsDevProfileOpen(false)}
+      />
     </div>
   );
 };
