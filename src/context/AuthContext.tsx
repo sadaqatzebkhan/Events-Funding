@@ -74,6 +74,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (username: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      return { success: false, error: 'You are offline. Please connect to the internet to sign in.' };
+    }
+
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -91,7 +95,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(data.user);
       return { success: true };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Network error during login' };
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        return { success: false, error: 'You are offline. Please connect to the internet to sign in.' };
+      }
+      return { success: false, error: 'You are offline or the server is unreachable. Please check your internet connection.' };
     }
   };
 

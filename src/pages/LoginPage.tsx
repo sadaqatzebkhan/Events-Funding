@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Lock, User, AlertCircle, ArrowRight } from 'lucide-react';
+import { Lock, User, AlertCircle, ArrowRight, WifiOff } from 'lucide-react';
 import { DeveloperProfileModal } from '../components/DeveloperProfileModal';
 
 export const LoginPage: React.FC = () => {
@@ -10,9 +10,35 @@ export const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDevProfileOpen, setIsDevProfileOpen] = useState(false);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false);
+      if (error && error.toLowerCase().includes('offline')) {
+        setError(null);
+      }
+    };
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [error]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!navigator.onLine) {
+      setError('You are offline. Please connect to the internet to sign in.');
+      return;
+    }
+
     if (!username.trim() || !password) {
       setError('Please enter your username/phone and password.');
       return;
@@ -47,11 +73,23 @@ export const LoginPage: React.FC = () => {
           </p>
         </div>
 
+        {/* Offline indicator banner */}
+        {isOffline && !error && (
+          <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-800 flex items-center gap-2">
+            <WifiOff size={15} className="text-amber-600 shrink-0" />
+            <span>You are currently offline. Connect to the internet to sign in.</span>
+          </div>
+        )}
+
         {/* Login Card */}
         <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 shadow-xs space-y-4">
           {error && (
             <div className="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800 flex items-start gap-2">
-              <AlertCircle size={15} className="text-rose-600 shrink-0 mt-0.5" />
+              {error.toLowerCase().includes('offline') ? (
+                <WifiOff size={15} className="text-rose-600 shrink-0 mt-0.5" />
+              ) : (
+                <AlertCircle size={15} className="text-rose-600 shrink-0 mt-0.5" />
+              )}
               <span>{error}</span>
             </div>
           )}
